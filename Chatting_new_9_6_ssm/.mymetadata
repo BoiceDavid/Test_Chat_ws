@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="Chatting_new_9_6_ssm"
+  id="myeclipse.1482745385242"
+  context-root="/Chatting_new_9_6_ssm"
+  j2ee-spec="6.0"
+  archive="Chatting_new_9_6_ssm.war">
+  <attributes>
+    <attribute name="webrootdir" value="src/main/webapp" />
+  </attributes>
+</project-module>
+

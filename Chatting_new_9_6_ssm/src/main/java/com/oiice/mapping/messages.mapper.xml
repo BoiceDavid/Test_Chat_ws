@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.oiice.dao.MessagesMapper">
+	 <resultMap type="com.oiice.vo.Messages" id="messagesResult">
+		<id column="msgId" jdbcType="INTEGER" property="msgId"/>
+		<result column="msgContent" jdbcType="VARCHAR" property="msgContent"/>
+		<result column="msgStatus" jdbcType="INTEGER" property="msgStatus"/>
+		<result column="msgTime" jdbcType="TIMESTAMP" property="msgTime"/>
+		<!-- <association property="messagestype" resultMap="messagestypeResult"></association> -->
+		<association property="usersByMsgFromUserId" resultMap="com.oiice.dao.UserMapper.UserResult"></association>
+		<association property="usersByMsgToUserId" resultMap="com.oiice.dao.UserMapper.UserResult"></association>
+	</resultMap>
+	
+	<!-- ognl能直接调用Java对象的方法，&quot;表示双引号，&amp;表示&-->
+	<!-- 查询消息信息 -->
+  <select id="selectMessagesById" parameterType="INTEGER" resultType="com.oiice.vo.Messages">
+  	select * from Messages where msgId=#{msgId}
+  </select>
+  
+  <!-- 根据userId查询指定用户的未读消息 -->
+  <select id="selectUnreadByFromUserId"  parameterType="INTEGER" resultType="com.oiice.vo.Messages">
+  	select * from messages where msgStatus=0 and msgToUserId=#{msgToUserId};
+  </select>
+  
+  <!-- 插入消息 -->
+  <insert id="insertMessages" useGeneratedKeys="true" keyProperty="msgId" parameterType="com.oiice.vo.Messages" >
+  	insert into Messages(msgContent,msgStatus,msgTypeId,msgFromUserId,msgToUserId) 
+  	values(#{msgContent},#{msgStatus},#{msgTypeId},#{msgFromUserId},#{msgToUserId});
+  </insert>
+  
+  <!-- 更新消息状态 -->
+  <update id="updateMessages" useGeneratedKeys="true" keyProperty="msgId" parameterType="com.oiice.vo.Messages">
+  	UPDATE messages SET msgStatus = #{msgStatus} WHERE msgId = #{msgId} 
+  </update>
+  
+  <!-- 查询指定用户的所有信息记录 -->
+  <select id="selectMessagesByMsgToUserId" parameterType="INTEGER" resultType="com.oiice.vo.Messages">
+  	select * from Messages where msgToUserId=#{msgToUserId}
+  </select>
+  
+  <!-- 根据发送者和接收者查询未读消息 -->
+  <select id="selectUnread"  parameterType="com.oiice.vo.Messages" resultType="com.oiice.vo.Messages">
+  	select * from messages where msgStatus=0 and msgTypeId=1 and msgToUserId=#{msgToUserId} and msgFromUserId=#{msgFromUserId};
+  </select>
+  
+  <!-- 根据发送者和接收者查询未读好友请求id -->
+  <select id="selectUnreadReq"  parameterType="com.oiice.vo.Messages" resultType="com.oiice.vo.Messages">
+  	select * from messages where msgStatus=0 and msgTypeId=3 and msgToUserId=#{msgToUserId} and msgFromUserId=#{msgFromUserId};
+  </select>
+  
+</mapper>

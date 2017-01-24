@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+       Copyright 2009-2016 the original author or authors.
+
+       Licensed under the Apache License, Version 2.0 (the "License");
+       you may not use this file except in compliance with the License.
+       You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+       Unless required by applicable law or agreed to in writing, software
+       distributed under the License is distributed on an "AS IS" BASIS,
+       WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+       See the License for the specific language governing permissions and
+       limitations under the License.
+
+-->
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.oiice.dao.UserMapper">
+
+  <resultMap type="com.oiice.vo.User" id="UserResult">
+    <id column="userId" jdbcType="INTEGER" property="userId"/>
+    <result column="userLoginId" jdbcType="INTEGER" property="userLoginId"/>
+    <result column="userNickName" jdbcType="VARCHAR" property="userNickName"/>
+    <result column="userPassWord" jdbcType="VARCHAR" property="userPassWord"/>
+    <result column="userSignature" jdbcType="VARCHAR" property="userSignature"/>
+    <result column="userSex" jdbcType="INTEGER" property="userSex"/>
+    <result column="userBirthday" jdbcType="DATE" property="userBirthday"/>
+    <result column="userHeadPortrait" jdbcType="VARCHAR" property="userHeadPortrait"/>
+    <result column="policyId" jdbcType="INTEGER" property="policyId"/>
+    <result column="userStatus" jdbcType="INTEGER" property="userStatus"/>
+    <result column="userFriendPolicyQuestion" jdbcType="VARCHAR" property="userFriendPolicyQuestion"/>
+    <result column="userFriendPolicyAnswer" jdbcType="VARCHAR" property="userFriendPolicyAnswer"/>
+    <result column="userGids" jdbcType="VARCHAR" property="userGids"/>
+    <collection property="friendsesForMyUserId" resultMap="com.oiice.dao.FriendsMapper.FriendsResult"/>
+    <collection property="friendsesForFriendUserId" resultMap="com.oiice.dao.FriendsMapper.FriendsResult"/>
+    <collection property="messagesesForMsgFromUserId" resultMap="com.oiice.dao.MessagesMapper.messagesResult"/>
+    <collection property="messagesesForMsgToUserId" resultMap="com.oiice.dao.MessagesMapper.messagesResult"/>
+    <!-- <collection property="friendgroupses" resultMap="com.oiice.dao.FriendgroupsMapper.friendgroupsResult"/> -->
+  </resultMap>
+  
+  <!-- 基本查询（通过ID得到用户） -->
+  <select id="queryUserById" parameterType="INTEGER" resultType="com.oiice.vo.User">
+  	select * from users where userId=#{userId}
+  </select>
+  <select id="queryUserByNickName" resultType="com.oiice.vo.User">
+  	select * from users where userNickName=#{userNickName}
+  </select>
+  
+  <!-- 更新用户状态 -->
+  <update id="updateUstatusById" parameterType="com.oiice.vo.User">
+  	update users set userStatus=#{userStatus} where userId=#{userId};
+  </update>
+  
+	<!-- ognl能直接调用Java对象的方法，&quot;表示双引号，&amp;表示&-->
+	<!-- 登录 -->
+  <select id="queryUser" parameterType="com.oiice.vo.User" resultType="com.oiice.vo.User">
+  	select * from users where userLoginId=#{userLoginId} and userPassWord=#{userPassWord}
+  </select>
+  
+  <!-- 注册 -->
+  <insert id="insertUser" useGeneratedKeys="true" keyProperty="userId" parameterType="com.oiice.vo.User" >
+  	insert into users(userLoginId,userNickName,userPassWord,userSex,userBirthday,userHeadPortrait) 
+  	values(#{userLoginId},#{userNickName},#{userPassWord},#{userSex},#{userBirthday},#{userHeadPortrait});
+  </insert>
+    
+  <!-- 加载好友列表 -->
+  <select id="getFriendsByMyId" parameterType="INTEGER" resultType="com.oiice.vo.User">
+  	select * from users where userId in (select friendUserId from friends where myUserId=#{userId});
+  </select>
+  
+  <!-- 通过用户账号查询用户 -->
+  <select id="selectUserByLoginId" parameterType="INTEGER" resultType="com.oiice.vo.User">
+  	select * from users where userLoginId = #{userLoginId}
+  </select> 
+  
+  <!-- 更新用户userGids -->
+  <update id="updateUserGidsById" parameterType="com.oiice.vo.User">
+  	update users set userGids=#{userGids} where userId=#{userId};
+  </update>
+</mapper>

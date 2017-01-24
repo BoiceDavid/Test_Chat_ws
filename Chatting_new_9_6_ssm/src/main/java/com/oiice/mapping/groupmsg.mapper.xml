@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.oiice.dao.GroupsmsgMapper">
+	<resultMap type="com.oiice.vo.Groupmsg" id="groupmsgResult">
+		<id column="gmId" jdbcType="INTEGER" property="gmId"/>
+		<result column="msgContent" jdbcType="VARCHAR" property="msgContent"/>
+		<result column="readedUserId" jdbcType="VARCHAR" property="readedUserId"/>
+		<result column="msgType" jdbcType="INTEGER" property="msgType"/>
+		<result column="msgTime" jdbcType="TIMESTAMP" property="msgTime"/>
+		<association property="user" resultMap="com.oiice.dao.UserMapper.UserResult"></association>
+		<association property="group" resultMap="com.oiice.dao.GroupsMapper.GroupsResult"></association>
+	</resultMap> 
+  
+  
+  <insert id="insertGroupmsg" useGeneratedKeys="true" keyProperty="gmId" parameterType="com.oiice.vo.Groupmsg" >
+  	INSERT INTO groupmsg(msgContent,msgTime,getmsgid,sendUserId,readedUserId) 
+            VALUES(#{msgContent},#{msgTime},#{getmsgid},#{sendUserId},#{readedUserId});
+  </insert>
+  
+  <!-- 更新群消息状态 -->
+  <update id="updateGroupmsgReaded" useGeneratedKeys="true" keyProperty="gmId" parameterType="com.oiice.vo.Groupmsg">
+  	UPDATE groupmsg SET readedUserId = #{readedUserId} WHERE gmId = #{gmId} 
+  </update>
+  
+  	<!-- 查询群消息 -->
+  <select id="selectGroupmsgById" parameterType="INTEGER" resultType="com.oiice.vo.Groupmsg">
+  	select * from groupmsg where gmId = #{gmId} 
+  </select>
+  
+</mapper>

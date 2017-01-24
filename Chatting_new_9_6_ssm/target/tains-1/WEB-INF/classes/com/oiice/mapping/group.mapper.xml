@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.oiice.dao.GroupsMapper">
+	<resultMap type="com.oiice.vo.Group" id="GroupResult">
+		<id column="gid" jdbcType="INTEGER" property="gid"/>
+		<result column="gname" jdbcType="VARCHAR" property="gname"/>
+		<result column="members" jdbcType="VARCHAR" property="members"/>
+		<result column="createtime" jdbcType="VARCHAR" property="createtime"/>
+		<collection property="groupmsgs" resultMap="groupmsgResult"/>
+	</resultMap> 
+	
+	<resultMap type="com.oiice.vo.Groupmsg" id="groupmsgResult">
+		<id column="gmId" jdbcType="INTEGER" property="gmId"/>
+		<result column="msgContent" jdbcType="VARCHAR" property="msgContent"/>
+		<result column="readedUserId" jdbcType="VARCHAR" property="readedUserId"/>
+		<result column="msgType" jdbcType="INTEGER" property="msgType"/>
+		<result column="msgTime" jdbcType="TIMESTAMP" property="msgTime"/>
+		<result column="getmsgid" jdbcType="INTEGER" property="getmsgid"/>
+		<result column="sendUserId" jdbcType="INTEGER" property="sendUserId"/>
+	</resultMap> 
+	
+	<!-- 根据gid查询群 -->
+	<select id="selectGroupByGid" parameterType="INTEGER" resultType="com.oiice.vo.Group">
+		 select * from `group` where gid=#{gid};
+	</select>
+	
+	<!-- 根据gid查询群和群消息 -->
+	<select id="selectGroupandmsgByGid" parameterType="INTEGER" resultMap="GroupResult">
+		select * from `group` left join groupmsg on gid=getmsgid where gid=#{gid};
+	</select>
+	
+	<update id="updateGroupmember" useGeneratedKeys="true" keyProperty="gid" parameterType="com.oiice.vo.Group" >
+		UPDATE `group` SET members = #{members} WHERE gid = #{gid};
+	</update>
+	
+
+</mapper>

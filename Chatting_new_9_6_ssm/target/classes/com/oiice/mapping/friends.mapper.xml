@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://www.mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.oiice.dao.FriendsMapper">
+
+  <resultMap type="com.oiice.vo.Friends" id="friendsResult">
+    <id column="friendsId" jdbcType="INTEGER" property="friendsId"/>
+    <result column="friendName" jdbcType="VARCHAR" property="friendName"/>
+    <association property="usersByFriendUserId" resultMap="com.oiice.dao.UserMapper.UserResult"></association>
+    <association property="usersByMyUserId" resultMap="com.oiice.dao.UserMapper.UserResult"></association>
+    <!-- <association property="friendgroups" resultMap="com.oiice.vo.mapper.FriendgroupsMapper.friendgroupsResult"></association>
+    <association property="friendtype" resultMap="com.oiice.vo.mapper.FriendtypeMapper.friendtypeResult"></association> -->
+  </resultMap>
+  
+  <insert id="insertFriend" useGeneratedKeys="true" keyProperty="friendsId" parameterType="com.oiice.vo.Friends" >
+  	INSERT INTO friends(friendUserId,myUserId,typeId) 
+            VALUES(#{friendUserId},#{myUserId},#{typeId});
+  </insert>
+  
+  <select id="selectMyFriend" parameterType="com.oiice.vo.Friends" resultType="INTEGER">
+  	select count(friendsId) from friends where friendUserId=#{friendUserId} and myUserId = #{myUserId};
+  </select>
+  
+</mapper>
